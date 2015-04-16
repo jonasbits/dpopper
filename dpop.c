@@ -5,7 +5,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <syslog.h>
-#include <varargs.h>
+#include <strings.h>
+#include <stdarg.h>
+// #include 
+// <varargs.h>
+// clang wants the above line instead
 
 #define NO_USER		1
 #define NO_PASS		2
@@ -27,7 +31,7 @@ FILE*	out;
 
 #define TIMEOUT		(10*60)		/* 10 minute timeout by default */
 
-void main( int argc, char** argv[] ){
+int main( int argc, char *argv[] ){
 
 	char	buffer[ 1024 ];
 	char	username[ 64 ];
@@ -38,14 +42,14 @@ void main( int argc, char** argv[] ){
 	if( in == NULL ){
 		perror( "Opening input stream" );
 		syslog( LOG_EMERG, "Opening input stream failed with error %m" );
-		return;
+		return 1;
 	}
 
 	out = fdopen( fileno( stdout ), "wb" );
 	if( out == NULL ){
 		syslog( LOG_EMERG, "Opening output stream failed with error %m" );
 		perror( "Opening output stream" );
-		return;
+		return 2;
 	}
 
 	openlog( (char*) argv[0], LOG_PID, LOG_MAIL );
@@ -60,7 +64,7 @@ void main( int argc, char** argv[] ){
 
 	srandom( getpid() );
 
-	fprintf( out, "+OK KP's DPopper V1.00 (kpielorz@tdx.com) Ready <%i%i@%s>\r\n", getpid(), random(), buffer );
+	fprintf( out, "+OK KP's DPopper V1.00 (kpielorz@tdx.com) Ready <%i%li%s>\r\n", getpid(), random(), buffer );
 
 	while( state != LOGGED_IN ){
 
@@ -90,7 +94,7 @@ void main( int argc, char** argv[] ){
 			if( state == NO_USER ){
 				fprintf( out, "+OK %s selected.\r\n", buffer+5 );
 				username[0] = 0;
-				strncat( username, buffer + 5, sizeof( username ) );
+				strncat( username, buffer + 5, sizeof(username) - strlen(username) - 1 );
 				state = NO_PASS;
 			} else {
 				fprintf( out, "-ERR Already selected a username.\r\n" );
@@ -134,6 +138,8 @@ void main( int argc, char** argv[] ){
 		}
 
 	}
+
+//eternal loop, exit with Ctrl-C
 
 	while( 1 ){
 
@@ -207,7 +213,8 @@ void main( int argc, char** argv[] ){
 		}
 
 	}
-
+//exit cleanly with return 0?
+return 0;
 }
 
 void do_prelogin_usage(){
