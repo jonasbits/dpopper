@@ -133,6 +133,11 @@ int main( int argc, char *argv[] ){
 			valid_command = YES;
 		}
 
+		if( strcasecmp( buffer, "CAPA" ) == 0 ){
+			fprintf( out, "+OK Capability list follows.\r\nUSER\r\n.\r\n");
+			valid_command = YES;
+		}
+
 		if( valid_command == NO ){
 			do_prelogin_usage();
 		}
@@ -146,6 +151,11 @@ int main( int argc, char *argv[] ){
 		valid_command = NO;
 
 		readcommand( buffer, sizeof( buffer ) );
+
+		if( strcasecmp( buffer, "CAPA" ) == 0 ){
+			fprintf( out, "+OK Capability list follows.\r\nUSER\r\n.\r\n");
+			valid_command = YES;
+		}
 
 		if( strcasecmp( buffer, "STAT" ) == 0 ){
 			fprintf( out, "+OK 0 0\r\n" );
@@ -219,13 +229,13 @@ return 0;
 
 void do_prelogin_usage(){
 
-	fprintf( out, "-ERR Invalid command, try one of: USER name, PASS string, APOP name digest, QUIT\r\n" );
+	fprintf( out, "-ERR Invalid command, try one of: USER name, PASS string, APOP name digest, CAPA, QUIT\r\n" );
 
 }
 
 void do_loggedin_usage(){
 
-	fprintf( out, "-ERR Invalid command, try one of: STAT, LIST [msg], RETR msg, TOP msg n, DELE msg, UIDL [msg], NOOP, RSET, QUIT\r\n" );
+	fprintf( out, "-ERR Invalid command, try one of: STAT, LIST [msg], RETR msg, TOP msg n, DELE msg, UIDL [msg], NOOP, RSET, CAPA, QUIT\r\n" );
 
 }
 
