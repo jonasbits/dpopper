@@ -31,6 +31,9 @@ Note how dpopper is run as 'nobody' - this means 'nobody' must have read and
 execute permission for the directory dpopper is running in, and that dpopper
 itself must be executable by 'everyone'.
 
+This line could be used to test dpopper:
+socat TCP-LISTEN:2525,reuseaddr,fork exec:./dpopper
+
 If you use this program - please let me know! by emailaing me, that way I can
 get a better idea of what people are using it for, with regards to future
 improvements etc!
